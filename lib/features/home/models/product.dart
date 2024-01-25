@@ -17,10 +17,13 @@ class Product {
   late final Rating rating;
 
   Product.fromJson(Map<String, dynamic> json) {
+    print(json);
     id = json['id'];
     title = json['title'];
 
-    price = json['price'];
+    price = json['price'] is double
+        ? json['price']
+        : double.tryParse(json['price'].toString()) ?? 0.0;
     description = json['description'];
     category = json['category'];
     image = json['image'];
@@ -49,7 +52,9 @@ class Rating {
   late final int count;
 
   Rating.fromJson(Map<String, dynamic> json) {
-    rate = json['rate'];
+    rate = json['rate'] is double
+        ? json['rate']
+        : double.tryParse(json['rate'].toString()) ?? 0.0;
     count = json['count'];
   }
 

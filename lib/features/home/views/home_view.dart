@@ -15,6 +15,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final List<Product> productList = [];
+  bool _isLoading = false;
   @override
   void initState() {
     getProduct();
@@ -23,11 +24,16 @@ class _HomeViewState extends State<HomeView> {
 
   void getProduct() async {
     try {
+      setState(() {
+        _isLoading = true;
+      });
       final response = await Dio().get("https://fakestoreapi.com/products/");
       for (final prdct in response.data) {
         productList.add(Product.fromJson(prdct));
       }
-      print(response.statusCode);
+      setState(() {
+        _isLoading = false;
+      });
     } catch (e) {
       print(e);
       ScaffoldMessenger.of(context)
@@ -43,20 +49,23 @@ class _HomeViewState extends State<HomeView> {
         },
         child: Icon(Icons.add),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (final prodct in productList) ProductCard(product: prodct)
-              ],
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (final prodct in productList)
+                        ProductCard(product: prodct)
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }
@@ -77,9 +86,15 @@ class ProductCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(
-              product.image,
-              fit: BoxFit.cover,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.network(
+                product.image,
+                fit: BoxFit.cover,
+              ),
+            ),
+            SizedBox(
+              height: 10,
             ),
             Text(
               product.title,
@@ -106,6 +121,8 @@ class ProductCard extends StatelessWidget {
                   width: 6,
                 ),
                 const Icon(Icons.star_rate_outlined, color: Colors.amber),
+                Icon(Icons.star_rate_outlined, color: Colors.amber),
+                Icon(Icons.star_rate_outlined, color: Colors.amber),
                 const Spacer(),
                 Text(
                   "Count: " + product.rating.count.toString(),
