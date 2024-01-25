@@ -14,6 +14,27 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final List<Product> productList = [];
+  @override
+  void initState() {
+    getProduct();
+    super.initState();
+  }
+
+  void getProduct() async {
+    try {
+      final response = await Dio().get("https://fakestoreapi.com/products/");
+      for (final prdct in response.data) {
+        productList.add(Product.fromJson(prdct));
+      }
+      print(response.statusCode);
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -30,7 +51,7 @@ class _HomeViewState extends State<HomeView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // for (final prodct in productList) ProductCard(product: prodct)
+                for (final prodct in productList) ProductCard(product: prodct)
               ],
             ),
           ),
@@ -65,7 +86,7 @@ class ProductCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: applyGoogleFontToText(15),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Text("\$${product.price}", style: applyGoogleFontToText(15)),
@@ -73,7 +94,7 @@ class ProductCard extends StatelessWidget {
               height: 10,
             ),
             Text(product.description, style: applyGoogleFontToText(12)),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Row(
@@ -81,16 +102,16 @@ class ProductCard extends StatelessWidget {
                 Text("Rating: " + product.rating.rate.toString(),
                     style:
                         TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                SizedBox(
+                const SizedBox(
                   width: 6,
                 ),
-                Icon(Icons.star_rate_outlined, color: Colors.amber),
-                Spacer(),
+                const Icon(Icons.star_rate_outlined, color: Colors.amber),
+                const Spacer(),
                 Text(
                   "Count: " + product.rating.count.toString(),
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 20,
                 ),
               ],
