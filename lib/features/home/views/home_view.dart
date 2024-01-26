@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:product_app/common/helpers.dart';
 import 'package:product_app/features/add_edit/views/add_edit_page.dart';
-import 'package:product_app/features/home/models/product.dart';
+import 'package:product_app/common/models/product.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({
@@ -16,6 +16,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final List<Product> productList = [];
   bool _isLoading = false;
+
   @override
   void initState() {
     getProduct();
@@ -47,7 +48,7 @@ class _HomeViewState extends State<HomeView> {
         onPressed: () {
           navigateTo(context, AddPage());
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
@@ -71,11 +72,12 @@ class _HomeViewState extends State<HomeView> {
 }
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({
+  ProductCard({
     super.key,
     required this.product,
   });
   final Product product;
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -93,7 +95,7 @@ class ProductCard extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Text(
@@ -121,8 +123,8 @@ class ProductCard extends StatelessWidget {
                   width: 6,
                 ),
                 const Icon(Icons.star_rate_outlined, color: Colors.amber),
-                Icon(Icons.star_rate_outlined, color: Colors.amber),
-                Icon(Icons.star_rate_outlined, color: Colors.amber),
+                const Icon(Icons.star_rate_outlined, color: Colors.amber),
+                const Icon(Icons.star_rate_outlined, color: Colors.amber),
                 const Spacer(),
                 Text(
                   "Count: " + product.rating.count.toString(),

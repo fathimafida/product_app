@@ -15,33 +15,13 @@ class _AddPageState extends State<AddPage> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
-
-  void addProduct({
-    required String title,
-    required String description,
-    required String price,
-  }) async {
-    try {
-      if (_formKey.currentState!.validate()) {
-        final response =
-            await Dio().post("https://fakestoreapi.com/products/", data: {
-          "title": title,
-          "description": description,
-          "price": price,
-        });
-        print(response.data);
-      }
-    } catch (e) {
-      print(e);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
-    }
-  }
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Form(
+      key: _formKey,
       child: SafeArea(
           child: Padding(
         padding: const EdgeInsets.all(10),
@@ -69,7 +49,7 @@ class _AddPageState extends State<AddPage> {
                 controller: _descriptionController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Please enter title";
+                    return "Please enter description";
                   }
                   return null;
                 },
@@ -87,7 +67,7 @@ class _AddPageState extends State<AddPage> {
                 controller: _priceController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Please enter title";
+                    return "Please enter price";
                   }
                   return null;
                 },
@@ -101,15 +81,17 @@ class _AddPageState extends State<AddPage> {
             SizedBox(
               height: 10,
             ),
-            ElevatedButton(
-              onPressed: () {
-                addProduct(
-                    title: _titleController.text,
-                    description: _descriptionController.text,
-                    price: _priceController.text);
-              },
-              child: Text("Add Product"),
-            )
+            _isLoading
+                ? CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: () {
+                      // addProduct(
+                      //     title: _titleController.text,
+                      //     description: _descriptionController.text,
+                      //     price: _priceController.text);
+                    },
+                    child: Text("Add Product"),
+                  )
           ],
         ),
       )),
