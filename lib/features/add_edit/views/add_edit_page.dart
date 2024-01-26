@@ -17,6 +17,41 @@ class _AddPageState extends State<AddPage> {
   final _priceController = TextEditingController();
   bool _isLoading = false;
 
+  void addProduct(
+      {required String title,
+      required String description,
+      required String price}) async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        setState(() {
+          _isLoading = true;
+        });
+        final response =
+            await Dio().post("https://fakestoreapi.com/products/", data: {
+          "title": _titleController.text,
+          "description": _descriptionController.text,
+          "price": _priceController.text,
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Product Added")),
+        );
+
+        print(response.data);
+        final response2 = await Dio().get("https://fakestoreapi.com/products/");
+
+        Navigator.pop(context);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,10 +120,10 @@ class _AddPageState extends State<AddPage> {
                 ? CircularProgressIndicator()
                 : ElevatedButton(
                     onPressed: () {
-                      // addProduct(
-                      //     title: _titleController.text,
-                      //     description: _descriptionController.text,
-                      //     price: _priceController.text);
+                      addProduct(
+                          title: _titleController.text,
+                          description: _descriptionController.text,
+                          price: _priceController.text);
                     },
                     child: Text("Add Product"),
                   )
